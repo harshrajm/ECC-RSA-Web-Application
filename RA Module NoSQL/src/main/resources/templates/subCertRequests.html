@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html ng-app="myApp" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!--Angular CDN-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <!--Angular Controller-->
+    <script th:src="@{../js/subCertRequests.ctrl.js}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <style>
+        body{background:#FAFAFA;}
+    </style>
+</head>
+<body ng-controller="Ctrl as ctrl" th:attr="ng-init='ctrl.requests ='+${subCertReqs}">
+
+<div class="w3-bar w3-dark-grey">
+    <a class="w3-bar-item w3-button w3-black">Subscriber Module</a>
+    <a href="/sub/logout" class="w3-bar-item w3-button w3-right"><i class="fa fa-sign-out" aria-hidden="true">
+
+    </i>Logout</a>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+
+
+            <form action="/sub/goSubHome" method="post">
+                <button type="submit" class="btn btn-link"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Go
+                    Back
+                </button>
+            </form>
+
+            <div class="alert alert-danger" th:if="${note != null}">
+                <span th:text="${note}"></span>
+            </div>
+
+            <div class="w3-panel w3-card-4 w3-white" style="padding:15px;">
+                    <input type="text" class="form-control" placeholder="Enter Request Number to search" ng-model="ctrl.search.sNo" />
+            </div>
+
+            <div ng-repeat="req in ctrl.requests | filter:ctrl.search:strict">
+
+
+                <div class="w3-panel w3-card-2 w3-white" style="padding:10px;">
+
+                    <span ng-if="req.isEcc == false" class="badge badge-primary">RSA</span>
+                    <span ng-if="req.isEcc" class="badge badge-secondary">ECC</span>
+
+                    <span ng-if="req.status == 0" class="float-right badge badge-info" style="margin-left:5px;">Pending RA Verification</span>
+                    <span ng-if="req.status == 1" class="float-right badge badge-info" style="margin-left:5px;">Pending RA Authorization</span>
+                    <span ng-if="req.status == 2" class="float-right badge badge-info" style="margin-left:5px;">Pending CA Verification</span>
+                    <span ng-if="req.status == 3" class="float-right badge badge-info" style="margin-left:5px;">Pending CA Authorization</span>
+                    <span ng-if="req.status == 4" class="float-right badge badge-info" style="margin-left:5px;">Pending Cert Generation</span>
+                    <span ng-if="req.status == 5" class="float-right badge badge-success" style="margin-left:5px;">Cert Ready to Download</span>
+                    <span ng-if="req.status == 9" class="float-right badge badge-danger" style="margin-left:5px;">Request Rejected</span>
+
+                    <h4>Request Number: {{req.sNo}}</h4>
+
+                    <p class=" float-right text-muted">{{req.reqDate}}</p>
+
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#{{$index}}">More Details</button>
+
+                    <div id="{{$index}}" class="collapse">
+
+                        <div class="table-responsive">
+                            <table class="table" style="word-wrap: break-word;">
+                                <tbody>
+                                <tr>
+                                    <td><strong>Distinguished Name</strong></td>
+                                    <td>{{req.csr.distinguishedName}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Organization</strong></td>
+                                    <td>{{req.csr.organization}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Organizational Unit</strong></td>
+                                    <td>{{req.csr.organizationalUnit}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>City</strong></td>
+                                    <td>{{req.csr.city}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>State</strong></td>
+                                    <td>{{req.csr.state}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Country</strong></td>
+                                    <td>{{req.csr.country}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Email</strong></td>
+                                    <td>{{req.csr.email}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Class</strong></td>
+                                    <td>{{req.certClass}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Validity</strong></td>
+                                    <td>{{req.validity}} Yr/Yrs</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>PAN</strong></td>
+                                    <td>{{req.pan}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Comments</strong></td>
+                                    <td>{{req.other}}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+</div>
+</body>
+</html>

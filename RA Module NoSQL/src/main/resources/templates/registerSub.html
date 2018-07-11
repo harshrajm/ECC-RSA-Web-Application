@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html ng-app="myApp"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <!--Angular CDN-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <!--Angular Controller-->
+    <script th:src="@{../js/registerSub.ctrl.js}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+
+    <style>
+        .pagination-centered {
+         text-align: center;
+                }
+    </style>
+</head>
+<body ng-controller="Ctrl as ctrl">
+<!--Begin Nav-->
+<div class="w3-bar w3-dark-grey">
+    <a class="w3-bar-item w3-button w3-black" href="/home">RA Module <i sec:authorize="hasRole('ROLE_RA_ADMIN')" class="fa fa-adn"></i></a>
+    <div class="w3-dropdown-hover">
+        <button class="w3-button">Subscriber <i class="fa fa-caret-down"></i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <a href="/RA/registerSubEmail" class="w3-bar-item w3-button">Register Subscriber Email</a>
+        </div>
+    </div>
+    <div class="w3-dropdown-hover">
+        <button class="w3-button">RA <i class="fa fa-caret-down"></i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <a href="/RA/viewCertRequests" class="w3-bar-item w3-button">View All Certificate Requests</a>
+            <a href="/RA/verifyRequests" class="w3-bar-item w3-button">Verify Requests</a>
+            <a sec:authorize="hasRole('ROLE_RA_ADMIN')" href="/RA/authorizeRequests" class="w3-bar-item w3-button">Authorize Requests</a>
+        </div>
+    </div>
+    <form class="form-inline w3-right" method="post" action="/logout">
+        <button class="w3-btn " type="submit"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
+    </form>
+</div>
+<!--End Nav-->
+<div class="container-fluid" style="margin-top:20px">
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item active">Register Subscriber Email</li>
+            </ol>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h6>Enter Subscriber Email</h6>
+
+
+                    <form method="post" action="/RA/processSubEmail" name="refSubForm" novalidate="novalidate">
+                        <input ng-required="true"  ng-model="email" name="subEmail"  type="email" class="form-control"
+                               placeholder="eg. rahul@icici.com" autocomplete="off"/>
+
+                        <button ng-disabled="refSubForm.$invalid" style="margin-top:7px;" type="submit" class="btn btn-primary float-right">
+                            Submit
+                        </button>
+                    </form>
+
+
+            </div>
+            <div class="col-md-6">
+                <div th:if="${SubAlreadyReg}" class="card bg-light text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">Email Already Registered</h5>
+                        <hr/>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <h6>Email</h6>
+                                <span th:text="${request.subEmail}"></span><br/>
+                                <h6>Added By</h6>
+                                <span th:text="${emailAddedBy}"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Added on</h6>
+                                <span th:text="${request.firstInsert}"></span><br/>
+                                <h6>Last OTP sent on</h6>
+                                <span th:text="${request.mailSentOn}"></span>
+                            </div>
+                        </div>
+
+
+                        <br/>
+                        <!--<a href="#" class="card-link">Send email again with OTP</a>-->
+
+                    </div>
+                </div>
+                <div th:if="${SubAlreadyReg == false}" class="card bg-light text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">Email not registered</h5>
+                        <hr/>
+
+                        <p>Do you want to register subscriber with Email <strong><span th:text="${emailToReg}"></span></strong> ?</p>
+
+                        <br/>
+                        <a th:href="@{'/RA/subEmail/'+${emailToReg}+'/add'}" class="card-link">Yes! Register <span th:text="${emailToReg}"></span></a>
+
+                    </div>
+
+
+
+            </div>
+
+                <div th:if="${emailAdded}" class="card bg-light text-dark">
+                    <div class="card-body">
+
+
+                        <h5 class="card-title">Email Added!</h5>
+                        <hr/>
+
+                        <div class="row-fluid">
+                            <div class="span12 pagination-centered"><img width="50px" th:src="@{/gifs/tick.gif}" src="https://thumbs.gfycat.com/ShyCautiousAfricanpiedkingfisher-max-1mb.gif" alt="header" /></div>
+                        </div>
+                        <p class="text-center">Email <strong><span th:text="${email}"></span></strong> is added successfully</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<p>hi frm html </p>
+<p> hi from angular {{ctrl.xyz}}</p>
+<span th:text="${name}"></span>-->
+</body>
+</html>

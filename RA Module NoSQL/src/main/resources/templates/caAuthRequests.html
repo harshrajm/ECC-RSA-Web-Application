@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html ng-app="myApp"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <!--Angular CDN-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <!--Angular Controller-->
+    <script th:src="@{../js/caAuthRequest.ctrl.js}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <style>
+        body{background:#FAFAFA;}
+
+
+    </style>
+</head>
+<body ng-controller="Ctrl as ctrl" th:attr="ng-init='ctrl.requests ='+${certReqs}">
+
+<!--Begin Nav-->
+<div class="w3-bar w3-dark-grey">
+    <a class="w3-bar-item w3-button w3-black" href="/home">CA Module <i sec:authorize="hasRole('ROLE_CA_ADMIN')" class="fa fa-adn"></i></a>
+    <div class="w3-dropdown-hover">
+        <button class="w3-button">RA <i class="fa fa-caret-down"></i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <a href="/CA/" class="w3-bar-item w3-button">Create New RA Office</a>
+            <a href="/CA/" class="w3-bar-item w3-button">Create New RA Officer</a>
+            <a href="/CA/" class="w3-bar-item w3-button">Delete RA Officer</a>
+        </div>
+    </div>
+    <div class="w3-dropdown-hover">
+        <button class="w3-button">CA <i class="fa fa-caret-down"></i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <a href="/CA/viewCertRequests" class="w3-bar-item w3-button">View All Certificate Requests</a>
+            <a sec:authorize="hasRole('ROLE_CA_OFFICER')" href="/CA/verifyRequests" class="w3-bar-item w3-button">Verify Requests</a>
+            <a sec:authorize="hasRole('ROLE_CA_ADMIN')" href="/CA/authorizeRequests" class="w3-bar-item w3-button">Authorize Requests</a>
+        </div>
+    </div>
+    <form class="form-inline w3-right" method="post" action="/logout">
+        <button class="w3-btn " type="submit"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
+    </form>
+</div>
+<!--End Nav-->
+
+<div class="container-fluid" style="margin-top:15px;margin-left:20px;margin-right:10px;">
+
+    <div class="row">
+        <div class="col-md-1">
+            <!--<p>nothing checked: {{ctrl.nothingChecked}}</p>-->
+            <form action="/CA/authorizeChecked" method="post">
+
+                <input type="hidden" value="{{ctrl.dataToVerify}}" name="dataToAuth" />
+
+                <button ng-show="ctrl.requests.length > 0" ng-disabled="ctrl.nothingChecked" type="submit" class="btn btn-primary"
+                        style="position:fixed;left:0;top:0;margin-top:200px;margin-left:20px;">Authorize ({{ctrl.dataToVerify.length}})</button>
+
+            </form>
+        </div>
+        <div class="col-md-10">
+            <div class="alert alert-info" th:if="${note != null}">
+                <span th:text="${note}"></span>
+            </div>
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item" href="/home">Home</a>
+                <a class="breadcrumb-item" href="/RA/viewCertRequests">All Certificate Requests</a>
+                <span class="breadcrumb-item active">Authorize Requests</span>
+            </nav>
+
+            <span ng-show="ctrl.requests.length > 0" class="small pull-right text-muted">Showing {{ctrl.requests.length}} Requests to Authorize </span>
+            <span style="display:table;margin:0 auto;" ng-show="ctrl.requests.length == 0" class="small text-center text-muted">No Requests to display </span>
+
+            <div ng-show="ctrl.requests.length > 0" class="w3-panel w3-card-2 w3-white float-left text-center" style="margin:7px;">
+                <table  class="table table-responsive" style="margin:7px;margin-top:10px;">
+                    <thead>
+                    <tr>
+                        <th><input ng-model="ctrl.isVerifyAll" ng-change='ctrl.verifyAll()' type="checkbox"
+                                   class="form-check-input"/>Authorize
+                        </th>
+                        <th>Request Number</th>
+                        <!--<th>Certificate Type</th>-->
+                        <th>Cert Details</th>
+                        <!--<th>Class</th>-->
+                        <th>Subscriber Email</th>
+                        <th>Requested on</th>
+                        <th>Verified By CA email</th>
+                        <th>Verified by CA On</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="req in ctrl.requests">
+                    <tr>
+                        <td><input ng-change='ctrl.verify()' ng-model="req.verify" type="checkbox" class="form-check-input"/></td>
+                        <td><a  target="_blank" ng-href="/caCertReqDV/{{req.sNo}}">{{req.sNo}}</a></td>
+
+                        <td class="small">
+                            <span class="badge badge-light">Type:<span ng-if="!req.isEcc">RSA</span><span ng-if="req.isEcc">ECC</span></span>
+                            <span class="badge badge-light">Validity:{{req.validity}}yr</span>
+                            <span class="badge badge-light">Class:{{req.certClass}}</span></td>
+
+                        <td class="small">{{req.subEmail}}</td>
+                        <td class="small">{{req.reqDate | date:'medium'}}</td>
+                        <td class="small">{{req.verifiedByCaEmail}}</td>
+                        <td class="small">{{req.verifiedByCaOn | date:'medium'}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+</body>
+</html>

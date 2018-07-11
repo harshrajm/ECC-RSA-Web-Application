@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html ng-app="myApp" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!--Angular CDN-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <!--Angular Controller-->
+    <script th:src="@{../js/subEnterEmail.ctrl.js}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <style>
+        body{background:#FAFAFA;}
+    </style>
+</head>
+<body ng-controller="Ctrl as ctrl">
+
+<div class="w3-bar w3-dark-grey" >
+    <a class="w3-bar-item w3-button w3-black">Subscriber Module</a>
+    <a href="/sub/logout" class="w3-bar-item w3-button w3-right"><i class="fa fa-sign-out" aria-hidden="true">
+
+    </i>Logout</a>
+</div>
+<!--
+<p>hi frm html </p>
+<p> hi from angular {{ctrl.xyz}}</p>
+<span th:text="${test}"></span>-->
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-8">
+            <form action="/sub/goSubHome" method="post">
+                <button type="submit" class="btn btn-link"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Go
+                    Back
+                </button>
+            </form>
+
+            <div class="w3-card-4" style="margin-bottom:15px;">
+                <header class="w3-container w3-blue">
+                    <h3>Enter Certificate Request Details</h3>
+                </header>
+
+                <div class="w3-container w3-white" style="padding:15px;">
+                    <form name="certReqForm" method="post" action="/sub/submitCertRequest" autocomplete="off">
+                        <div>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h6 for="dn">Distinguished Name:</h6>
+                                            <input placeholder="eg. www.idrbt.ac.in" name="dn" ng-required="true"
+                                                   ng-model="dn"
+                                                   type="text" class="form-control" id="dn"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="o">Organization:</h6>
+                                            <input placeholder="eg. IDRBT" name="o" ng-required="true" ng-model="o"
+                                                   type="text"
+                                                   class="form-control" id="o"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="ou">Organizational Unit:</h6>
+                                            <input placeholder="eg. IT" name="ou" ng-required="true" ng-model="ou"
+                                                   type="text"
+                                                   class="form-control" id="ou"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="pn">PAN Number:</h6>
+                                            <input placeholder="Enter your PAN Number" name="pn" ng-required="true"
+                                                   ng-model="pn" type="text" class="form-control" id="pn"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h6 for="c">City:</h6>
+                                            <input placeholder="eg. Hyderabad" name="c" ng-required="true" ng-model="c"
+                                                   type="text" class="form-control" id="c"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="s">State:</h6>
+                                            <input placeholder="eg. Telangana" name="s" ng-required="true" ng-model="s"
+                                                   type="text" class="form-control" id="s"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="co">Country:</h6>
+                                            <input value="IN" ng-disabled="true" name="co" type="text"
+                                                   class="form-control"
+                                                   id="co"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <h6 for="e">Email:</h6>
+                                            <input th:value="${subEmail}" name="e" ng-required="true"
+                                                   type="text" class="form-control" id="e"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr/>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>Certificate Type:</h6>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="type" type="radio" name="type"
+                                                          value="0"/> RSA</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="type" type="radio" name="type"
+                                                          value="1"/> ECC</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6>Class of Certificate:</h6>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                          value="1"/> Class 1</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                          value="2"/> Class 2</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                          value="3"/> Class 3</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6>Validity of Certificate:</h6>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="validity" type="radio"
+                                                          name="validity"
+                                                          value="1"/> 1 Year</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input ng-required="true" ng-model="validity" type="radio"
+                                                          name="validity"
+                                                          value="2"/> 2 Years</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 for="comment">Comments(optional):</h6>
+                                        <textarea name="comnts" ng-model="comnts" class="form-control" rows="5"
+                                                  id="comment"></textarea>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="text-center">
+                                    <p ng-if="certReqForm.$invalid" class="text-muted">Note: All fields except Comments
+                                        are
+                                        mandatory</p>
+                                    <button ng-disabled="certReqForm.$invalid" type="submit" class="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!--<form name="certReqForm" method="post" action="/sub/submitCertRequest" autocomplete="off">
+                <div class="card bg-light" style="margin:15px;">
+                    <div class="card-header"><h5>Enter Certificate Request Details</h5></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6 for="dn">Distinguished Name:</h6>
+                                    <input placeholder="eg. www.idrbt.ac.in" name="dn" ng-required="true" ng-model="dn"
+                                           type="text" class="form-control" id="dn"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="o">Organization:</h6>
+                                    <input placeholder="eg. IDRBT" name="o" ng-required="true" ng-model="o" type="text"
+                                           class="form-control" id="o"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="ou">Organizational Unit:</h6>
+                                    <input placeholder="eg. IT" name="ou" ng-required="true" ng-model="ou" type="text"
+                                           class="form-control" id="ou"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="pn">PAN Number:</h6>
+                                    <input placeholder="Enter your PAN Number" name="pn" ng-required="true"
+                                           ng-model="pn" type="text" class="form-control" id="pn"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6 for="c">City:</h6>
+                                    <input placeholder="eg. Hyderabad" name="c" ng-required="true" ng-model="c"
+                                           type="text" class="form-control" id="c"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="s">State:</h6>
+                                    <input placeholder="eg. Telangana" name="s" ng-required="true" ng-model="s"
+                                           type="text" class="form-control" id="s"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="co">Country:</h6>
+                                    <input value="IN" ng-disabled="true" name="co" type="text" class="form-control"
+                                           id="co"/>
+                                </div>
+                                <div class="form-group">
+                                    <h6 for="e">Email:</h6>
+                                    <input ng-disabled="true" th:value="${subEmail}" name="e" ng-required="true"
+                                           type="text" class="form-control" id="e"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>Certificate Type:</h6>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="type" type="radio" name="type"
+                                                  value="0"/> RSA</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="type" type="radio" name="type"
+                                                  value="1"/> ECC</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h6>Class of Certificate:</h6>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                  value="1"/> Class 1</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                  value="2"/> Class 2</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="class" type="radio" name="class"
+                                                  value="3"/> Class 3</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h6>Validity of Certificate:</h6>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="validity" type="radio" name="validity"
+                                                  value="1"/> 1 Year</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input ng-required="true" ng-model="validity" type="radio" name="validity"
+                                                  value="2"/> 2 Years</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 for="comment">Comments(optional):</h6>
+                                <textarea name="comnts" ng-model="comnts" class="form-control" rows="5"
+                                          id="comment"></textarea>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="text-center">
+                            <p ng-if="certReqForm.$invalid" class="text-muted">Note: All fields except Comments are
+                                mandatory</p>
+                            <button ng-disabled="certReqForm.$invalid" type="submit" class="btn btn-primary"> Submit
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>-->
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+</div>
+</body>
+</html>
